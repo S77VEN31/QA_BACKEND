@@ -3,6 +3,6 @@ import { create } from "../controllers";
 const router = Router();
 
 // Create department routes
-router.post("/d", create);
+router.post("/", create);
 
 export default router;
