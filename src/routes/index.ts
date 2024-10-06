@@ -1,3 +1,6 @@
+// Department
 import departmentRoutes from "./department.routes";
+// Report
+import reportRoutes from "./report.routes";
 
-export { departmentRoutes };
+export { departmentRoutes, reportRoutes };

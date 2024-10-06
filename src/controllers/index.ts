@@ -1,3 +1,6 @@
-import { create } from "./department.controller";
+// Department Controller
+import { getDepartments } from "./department.controller";
+// Report Controller
+import { getReportDetail } from "./report.controller";
 
-export { create };
+export { getDepartments, getReportDetail };
