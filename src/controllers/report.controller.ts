@@ -5,16 +5,30 @@ import { pool } from "../database";
 // Utils
 import { formatDate } from "../utils";
 
-// Get report details. There can be filters on ID, date range, and department.
-// It gets the report details from the database and sends them as a response.
-// The response is an array of objects, each object representing a row in the report.
-// It receives a start range from where its going to start getting the data and a limit range
+/**
+ * Get report details with optional filters on ID, date range, and department.
+ * This function retrieves the report details from the database based on the provided filters.
+ * It sends the result as a JSON response, containing an array of objects where each object
+ * represents a row in the report.
+ * 
+ * @param {Request} req - The request object, which contains the following query parameters:
+ *    @param {string} [startDate] - The start date for filtering the report (YYYY-MM-DD format).
+ *    @param {string} [endDate] - The end date for filtering the report (YYYY-MM-DD format).
+ *    @param {string} [IDCard] - The ID card number for filtering by a specific person.
+ *    @param {string} [departmentID] - The department ID to filter the report by department.
+ *    @param {string} [startRange] - The starting index for pagination, defaults to 0 if not provided.
+ *    @param {string} [limitRange] - The limit of rows to retrieve, defaults to 100 if not provided.
+ * 
+ * @param {Response} res - The response object used to send the report data back to the client as JSON.
+ * 
+ * @returns {void} - Sends the report rows as a JSON response or an error message in case of failure.
+ */
 const getReportDetail = async (req: Request, res: Response) => {
   try {
-    let { date, endDate, IDCard, departmentID, startRange, limitRange } =
+    let { startDate, endDate, IDCard, departmentID, startRange, limitRange } =
       req.query;
 
-    const formattedDate = formatDate(date as string);
+    const formattedStartDate = formatDate(startDate as string);
     const formattedEndDate = formatDate(endDate as string);
     const idCardNumber = IDCard ? parseInt(IDCard as string, 10) : null;
     const departmentIdNumber = departmentID
@@ -26,7 +40,7 @@ const getReportDetail = async (req: Request, res: Response) => {
     const result = await pool.query(
       "SELECT * FROM getquincenas($1::DATE, $2::DATE, $3::INT, $4::SMALLINT, $5::INT, $6::INT)",
       [
-        formattedDate,
+        formattedStartDate,
         formattedEndDate,
         idCardNumber,
         departmentIdNumber,
@@ -67,3 +81,4 @@ const getReportTotal = async (req: Request, res: Response) => {
 };
 
 export { getReportDetail, getReportTotal };
+
