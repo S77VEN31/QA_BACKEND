@@ -1,8 +1,12 @@
+// Express
 import { Router } from "express";
-import { create } from "../controllers";
+// Controllers
+import { getDepartments } from "../controllers";
+
+// Router
 const router = Router();
 
-// Create department routes
-router.post("/", create);
+// Department routes
+router.get("/", getDepartments);
 
 export default router;

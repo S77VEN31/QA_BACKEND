@@ -1,13 +1,20 @@
+// ENV
 import dotenv from "dotenv";
+// Express
 import express, { Request, Response } from "express";
-import { pool } from "./database"; // Asume que el archivo de conexión a la base de datos está en un archivo separado llamado `db.ts`
-import { departmentRoutes } from "./routes";
+// Database connection
+import { pool } from "./database";
+// Routes
+import { departmentRoutes, reportRoutes } from "./routes";
+// CORS
+import cors from "cors";
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
+app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
-// Endpoint para probar la conexión a la base de datos
+
 app.get("/", async (req: Request, res: Response) => {
   try {
     const client = await pool.connect();
@@ -23,6 +30,7 @@ app.get("/", async (req: Request, res: Response) => {
 });
 
 app.use("/department", departmentRoutes);
+app.use("/report", reportRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

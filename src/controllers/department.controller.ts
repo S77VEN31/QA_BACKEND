@@ -1,19 +1,16 @@
+// Express
+import { Request, Response } from "express";
+// Database
 import { pool } from "../database";
 
-import { Request, Response } from "express";
-
-const create = async (req: Request, res: Response) => {
+const getDepartments = async (req: Request, res: Response) => {
   try {
-    const { name } = req.body;
-    const result = await pool.query(
-      "INSERT INTO department (name) VALUES ($1) RETURNING *",
-      [name]
-    );
-    res.status(201).json(result.rows[0]);
+    const result = await pool.query("SELECT * FROM getdepartamentos()");
+    res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error creating department");
+    res.status(500).send("Error getting departments");
   }
 };
 
-export { create };
+export { getDepartments };
