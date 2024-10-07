@@ -13,7 +13,7 @@ const pool = new Pool({
   ssl: {
     rejectUnauthorized: false,
   },
-});
+})
 
 const query = (text: string, params: any) => pool.query(text, params);
 
