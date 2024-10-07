@@ -13,7 +13,7 @@ const insertFortnight = async (req: Request, res: Response) => {
       formattedTimestamp = formatTimestamp(timestamp as string);
     } catch (err) {
       console.error(err);
-      res.status(404).send("Error inserting fortnight: Invalid timestamp");
+      res.status(404).send("Error insertando quincena: Fecha inválida");
     }
     const result = await pool.query("CALL insertquincena($1::TIMESTAMP)", [
       timestamp,
@@ -22,7 +22,7 @@ const insertFortnight = async (req: Request, res: Response) => {
     res.status(201).send("Success inserting fortnight");
   } catch (err) {
     console.error(err);
-    res.status(400).send(`Error inserting fortnight: ${err}`);
+    res.status(400).send(`${err}`);
   }
 };
 
