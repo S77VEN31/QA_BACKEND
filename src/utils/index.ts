@@ -1,4 +1,4 @@
 // Date utils
-import { formatDate } from "./date.util";
+import { formatDate, formatTimestamp } from "./date.util";
 
-export { formatDate };
+export { formatDate, formatTimestamp };

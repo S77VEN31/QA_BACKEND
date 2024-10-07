@@ -2,5 +2,6 @@
 import { getDepartments } from "./department.controller";
 // Report Controller
 import { getReportDetail, getReportTotal } from "./report.controller";
-
-export { getDepartments, getReportDetail, getReportTotal };
+// Fortnight controller
+import { insertFortnight } from "./fortnight.controller";
+export { getDepartments, getReportDetail, getReportTotal, insertFortnight };

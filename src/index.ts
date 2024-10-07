@@ -5,7 +5,7 @@ import express, { Request, Response } from "express";
 // Database connection
 import { pool } from "./database";
 // Routes
-import { departmentRoutes, reportRoutes } from "./routes";
+import { departmentRoutes, reportRoutes, fortnightRoutes } from "./routes";
 // CORS
 import cors from "cors";
 
@@ -31,6 +31,7 @@ app.get("/", async (req: Request, res: Response) => {
 
 app.use("/department", departmentRoutes);
 app.use("/report", reportRoutes);
+app.use("/fortnight", fortnightRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
