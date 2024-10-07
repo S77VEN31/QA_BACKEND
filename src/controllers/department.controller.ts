@@ -13,6 +13,21 @@ const getDepartments = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Create a new department by calling a stored procedure with the provided department name.
+ * This function extracts the department name from the query parameters and inserts it into
+ * the database using a stored procedure. A success or error message is sent as a response.
+ * 
+ * @param {Request} req - The request object, containing the following query parameters:
+ *    @param {string} [depNombre] - The name of the department to be created. This field is required.
+ * 
+ * @param {Response} res - The response object used to send the result back to the client.
+ *    Sends a success message if the department is created successfully, or an error message
+ *    if the department name is missing or an error occurs during the process.
+ * 
+ * @returns {void} - Sends a `201 Created` status with a success message, or a `400 Bad Request`
+ *    status if `depNombre` is not provided. If there is a server error, sends a `500 Internal Server Error`.
+ */
 const createDepartment = async (req: Request, res: Response) => {
   try {
     // Extract depNombre from query parameters
@@ -35,6 +50,24 @@ const createDepartment = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Assign a salary to all employees in a specified department by calling a stored procedure.
+ * This function extracts the department ID and salary from the query parameters and assigns
+ * the provided salary to all employees in the department using the stored procedure.
+ * A success or error message is sent as a response.
+ * 
+ * @param {Request} req - The request object, containing the following query parameters:
+ *    @param {string} [departamentoId] - The ID of the department to which the salary will be assigned. This field is required.
+ *    @param {number} [salario] - The salary amount to be assigned to all employees in the department. This field is required.
+ * 
+ * @param {Response} res - The response object used to send the result back to the client.
+ *    Sends a success message if the salary is assigned successfully, or an error message if the 
+ *    department ID or salary is missing, or if an error occurs during the process.
+ * 
+ * @returns {void} - Sends a `200 OK` status with a success message, or a `400 Bad Request` status
+ *    if `departamentoId` or `salario` is not provided. If there is a server error, sends a 
+ *    `500 Internal Server Error`.
+ */
 const assignSalaryToDepartment = async (req: Request, res: Response) => {
   try {
     // Extract depNombre from query parameters
@@ -57,6 +90,26 @@ const assignSalaryToDepartment = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Insert employees into a specified department by calling a stored procedure.
+ * This function extracts the department ID and a list of employee IDs from the request body
+ * and inserts them into the department using a stored procedure. It ensures that the 
+ * department ID and a non-empty array of employee IDs are provided before proceeding.
+ * A success or error message is sent as a response.
+ * 
+ * @param {Request} req - The request object, containing the following properties in the body:
+ *    @param {number} [departamentoId] - The ID of the department into which the employees will be inserted. This field is required.
+ *    @param {Array<number>} [empleados] - An array of employee IDs to be inserted into the department. This array must be non-empty.
+ * 
+ * @param {Response} res - The response object used to send the result back to the client.
+ *    Sends a success message if the employees are inserted successfully, or an error message if the 
+ *    department ID or employee list is missing, invalid, or empty. If an error occurs during 
+ *    the process, a server error response is sent.
+ * 
+ * @returns {void} - Sends a `200 OK` status with a success message, or a `400 Bad Request` status
+ *    if `departamentoId` or `empleados` array is missing or invalid. If there is a server error, 
+ *    sends a `500 Internal Server Error`.
+ */
 const insertEmployeesIntoDepartment = async (req: Request, res: Response) => {
   try {
     // Extract depNombre from query parameters
