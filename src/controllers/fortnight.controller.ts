@@ -20,9 +20,11 @@ const insertFortnight = async (req: Request, res: Response) => {
     ]);
 
     res.status(201).send("Success inserting fortnight");
-  } catch (err) {
-    console.error(err);
-    res.status(400).send(`${err}`);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+      res.status(400).send(`${error.message}`);
+    }
   }
 };
 
