@@ -27,7 +27,7 @@ const getReportDetail = async (req: Request, res: Response) => {
   try {
     let { startDate, endDate, IDCard, departmentID, startRange, limitRange } =
       req.query;
-    console.log(req.query);
+
     const formattedStartDate = formatDate(startDate as string);
     const formattedEndDate = formatDate(endDate as string);
     const idCardNumber = IDCard ? parseInt(IDCard as string, 10) : null;
@@ -48,8 +48,7 @@ const getReportDetail = async (req: Request, res: Response) => {
         limit,
       ]
     );
-    console.log(result.rows);
-    console.log("RETURNED");
+
     res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
@@ -82,3 +81,4 @@ const getReportTotal = async (req: Request, res: Response) => {
 };
 
 export { getReportDetail, getReportTotal };
+
