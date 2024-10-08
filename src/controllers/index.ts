@@ -9,7 +9,7 @@ import {
 // Report Controller
 import { getReportDetail, getReportTotal } from "./report.controller";
 // Fortnight controller
-import { insertFortnight } from "./fortnight.controller";
+import { insertFortnight, insertNFortnights } from "./fortnight.controller";
 
 export {
   getDepartments,
@@ -19,4 +19,5 @@ export {
   insertEmployeesIntoDepartment,
   getReportTotal,
   insertFortnight,
+  insertNFortnights,
 };
