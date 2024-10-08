@@ -4,24 +4,24 @@ import { Pool } from "pg";
 
 dotenv.config();
 
-// const pool = new Pool({
-//   user: "uc0s273qbjb0s2",
-//   host: "cc0gj7hsrh0ht8.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com",
-//   database: "d66vb806f6fbur",
-//   password: "pb3e74a0b0a8f9508bca388a79b208ebc2807d4ae310d49d393cc83e909bd57af",
-//   port: 5432,
-//   ssl: {
-//     rejectUnauthorized: false,
-//   },
-// });
+const isProduction = process.env.NODE_ENV === "production";
+
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "qa_project_test",
-  password: "dandiego235",
-  port: 5432,
+  user: isProduction ? process.env.PG_USER_PROD : process.env.PG_USER_DEV,
+  host: isProduction ? process.env.PG_HOST_PROD : process.env.PG_HOST_DEV,
+  database: isProduction
+    ? process.env.PG_DATABASE_PROD
+    : process.env.PG_DATABASE_DEV,
+  password: isProduction
+    ? process.env.PG_PASSWORD_PROD
+    : process.env.PG_PASSWORD_DEV,
+  port: isProduction
+    ? parseInt(process.env.PG_PORT_PROD || "5432")
+    : parseInt(process.env.PG_PORT_DEV || "5432"),
+  ssl: isProduction ? { rejectUnauthorized: false } : undefined,
 });
 
 const query = (text: string, params: any) => pool.query(text, params);
 
 export { pool, query };
+
