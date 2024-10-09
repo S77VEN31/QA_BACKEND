@@ -54,3 +54,4 @@ const insertNFortnights = async (req: Request, res: Response) => {
   }
 };
 export { insertFortnight, insertNFortnights };
+
