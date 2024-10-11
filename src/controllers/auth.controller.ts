@@ -55,7 +55,7 @@ const login = async (req: Request, res: Response) => {
           { id: result.rows[0].p_user_id },
           process.env.JWT_SECRET || "token",
           // expire in 1 minute
-          { expiresIn: "1m" }
+          { expiresIn: "1h" }
         );
         res.json({ token });
       }
@@ -67,3 +67,4 @@ const login = async (req: Request, res: Response) => {
 };
 
 export { login, register };
+
