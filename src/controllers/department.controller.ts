@@ -12,7 +12,10 @@ export const getDepartments = async (req: Request, res: Response) => {
     let result;
 
     if (cardID) {
-      result = await pool.query("SELECT * FROM getdepartamentos($1)", [cardID]);
+      result = await pool.query(
+        "SELECT * FROM getdepartamentosporcedula($1::INT)",
+        [cardID]
+      );
     } else {
       result = await pool.query("SELECT * FROM getdepartamentos()");
     }
