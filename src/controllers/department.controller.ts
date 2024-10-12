@@ -3,6 +3,23 @@ import { Request, Response } from "express";
 // Database
 import { pool } from "../database";
 
+/**
+ * Controller to retrieve departments, optionally filtered by a collaborator's card ID (cédula).
+ *
+ * This method checks if a card ID is provided in the query parameters. If a card ID is present, it queries the database 
+ * using a stored procedure (`getdepartamentos`) to retrieve departments associated with that collaborator. If no card ID is provided,
+ * it retrieves all departments using the same stored procedure without parameters.
+ *
+ * @async
+ * @function getDepartments
+ * @param {Request} req - Express request object, containing an optional card ID in req.query.cardID.
+ * @param {Response} res - Express response object, used to send responses to the client.
+ *
+ * @throws {Error} 400 - If the card ID is missing or invalid (if required).
+ * @throws {Error} 500 - If an unexpected error occurs while fetching the departments.
+ *
+ * @returns {void} Does not return a value, sends a JSON response with the departments' information or an error message.
+ */
 export const getDepartments = async (req: Request, res: Response) => {
   try {
     const cardID = req.query.cardID
@@ -24,6 +41,25 @@ export const getDepartments = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Controller to retrieve salary data for an employee in a specific department.
+ *
+ * This method receives a card ID (employee cédula) and a department ID from the query parameters. It checks that both 
+ * the card ID and department ID are provided, and then queries the database using the stored procedure 
+ * `obtenerdatosalarialcolaborador` to retrieve salary information for the specified employee and department.
+ * If either the card ID or department ID is missing, or if no salary data is found, an appropriate error response is sent.
+ *
+ * @async
+ * @function getEmployeeSalary
+ * @param {Request} req - Express request object, containing card ID in req.query.cardID and department ID in req.query.departmentID.
+ * @param {Response} res - Express response object, used to send responses to the client.
+ *
+ * @throws {Error} 400 - If the card ID or department ID is missing in the request.
+ * @throws {Error} 404 - If no salary data is found for the employee in the specified department.
+ * @throws {Error} 500 - If an unexpected error occurs while fetching the salary data.
+ *
+ * @returns {void} Does not return a value, sends a JSON response with the salary data or an error message.
+ */
 export const getEmployeeSalary = async (req: Request, res: Response) => {
   try {
     const cardID = req.query.cardID
