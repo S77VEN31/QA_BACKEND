@@ -297,33 +297,33 @@ export const setEmployeeSalary = async (req: Request, res: Response) => {
 };
 
 /*
-* Inserts employees into a specified department by calling a stored procedure.
-* This function extracts the department ID and an array of employee IDs (cardIDs) from the request body.
-* It validates that both the department ID and a non-empty array of employee IDs are provided before 
-* proceeding with the database operation.
-* If the validation is successful, the function calls a stored procedure (`insertEmpleadosDepartamentos`) 
-* to insert the employees into the specified department. The function handles various error cases, 
-* including missing or invalid input and specific SQL errors, and returns an appropriate response.
-*
-* @param {Request} req - The request object, containing the following properties in the body:
-*    @param {number} departmentID - The ID of the department where employees will be inserted. This field is required.
-*    @param {Array<number>} cardIDs - An array of employee IDs (cédulas) to be inserted into the department. The array must contain at least one element.
-*
-* @param {Response} res - The response object used to send the result back to the client.
-*    Sends a success message if the employees are inserted successfully. Sends a `400 Bad Request` status if:
-*      - The department ID is missing or invalid
-*      - The employee list (cardIDs) is missing or empty
-*    In the event of a database error, the function handles specific error codes:
-*      - `P0001`: Department does not exist.
-*      - `P0002`: One or more employee IDs (cédulas) do not exist.
-*      - `P0003`: One or more employees already belong to the department.
-*    For other errors, a `500 Internal Server Error` status is returned with a generic error message.
-*
-* @returns {void} - The function sends one of the following HTTP responses:
-*    - `200 OK` with a success message if the employees are inserted successfully.
-*    - `400 Bad Request` with a specific error message if input validation fails or the stored procedure returns an error.
-*    - `500 Internal Server Error` if an unexpected error occurs during the process.
-*/
+ * Inserts employees into a specified department by calling a stored procedure.
+ * This function extracts the department ID and an array of employee IDs (cardIDs) from the request body.
+ * It validates that both the department ID and a non-empty array of employee IDs are provided before
+ * proceeding with the database operation.
+ * If the validation is successful, the function calls a stored procedure (`insertEmpleadosDepartamentos`)
+ * to insert the employees into the specified department. The function handles various error cases,
+ * including missing or invalid input and specific SQL errors, and returns an appropriate response.
+ *
+ * @param {Request} req - The request object, containing the following properties in the body:
+ *    @param {number} departmentID - The ID of the department where employees will be inserted. This field is required.
+ *    @param {Array<number>} cardIDs - An array of employee IDs (cédulas) to be inserted into the department. The array must contain at least one element.
+ *
+ * @param {Response} res - The response object used to send the result back to the client.
+ *    Sends a success message if the employees are inserted successfully. Sends a `400 Bad Request` status if:
+ *      - The department ID is missing or invalid
+ *      - The employee list (cardIDs) is missing or empty
+ *    In the event of a database error, the function handles specific error codes:
+ *      - `P0001`: Department does not exist.
+ *      - `P0002`: One or more employee IDs (cédulas) do not exist.
+ *      - `P0003`: One or more employees already belong to the department.
+ *    For other errors, a `500 Internal Server Error` status is returned with a generic error message.
+ *
+ * @returns {void} - The function sends one of the following HTTP responses:
+ *    - `200 OK` with a success message if the employees are inserted successfully.
+ *    - `400 Bad Request` with a specific error message if input validation fails or the stored procedure returns an error.
+ *    - `500 Internal Server Error` if an unexpected error occurs during the process.
+ */
 export const insertEmployeesIntoDepartment = async (
   req: Request,
   res: Response
@@ -361,5 +361,29 @@ export const insertEmployeesIntoDepartment = async (
       console.error(err);
       res.status(500).send("Error assigning inserting employees to department");
     }
+  }
+};
+
+export const getEmployeeName = async (req: Request, res: Response) => {
+  try {
+    const IDCard = req.query.IDCard
+      ? parseInt(req.query.cardID as string)
+      : null;
+
+    if (!IDCard) {
+      res.status(400).json({ message: "IDCard is required" });
+    } else {
+      const result = await pool.query(`SELECT * FROM getempleadonombre($1)`, [
+        IDCard,
+      ]);
+      if (!result || result.rowCount === 0) {
+        res.status(404).json({ message: "Employee not found" });
+      } else {
+        res.status(200).json(result.rows[0]);
+      }
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error getting employee name");
   }
 };
