@@ -127,13 +127,16 @@ export const setSalary = async (req: Request, res: Response) => {
     const departmentIdNumber = departmentID
       ? parseInt(departmentID as string, 10)
       : null;
-    const salaryNumber = salary ? parseFloat(salary as string) : null;
-    const childrenNumber = childrenQuantity
-      ? parseInt(childrenQuantity as string, 10)
-      : null;
-    const contributionNumber = contributionPercentage
-      ? parseFloat(contributionPercentage as string)
-      : null;
+    const salaryNumber =
+      salary !== undefined ? parseFloat(salary as string) : null;
+    const childrenNumber =
+      childrenQuantity !== undefined
+        ? parseInt(childrenQuantity as string, 10)
+        : null;
+    const contributionNumber =
+      contributionPercentage !== undefined
+        ? parseFloat(contributionPercentage as string)
+        : null;
 
     if (!departmentIdNumber) {
       res.status(400).json({ message: "El ID del departamento es requerido" });
@@ -141,7 +144,7 @@ export const setSalary = async (req: Request, res: Response) => {
       res.status(400).json({ message: "El salario debe ser mayor a 0" });
     } else if (
       contributionNumber !== null &&
-      (contributionNumber <= 0 || contributionNumber > 5)
+      (contributionNumber < 0 || contributionNumber > 5)
     ) {
       res.status(400).json({
         message: "La contribución debe ser mayor a 0 y menor o igual a 5",
@@ -202,13 +205,16 @@ export const setEmployeeSalary = async (req: Request, res: Response) => {
     const departmentIdNumber = departmentID
       ? parseInt(departmentID as string, 10)
       : null;
-    const salaryNumber = salary ? parseFloat(salary as string) : null;
-    const childrenNumber = childrenQuantity
-      ? parseInt(childrenQuantity as string, 10)
-      : null;
-    const contributionNumber = contributionPercentage
-      ? parseFloat(contributionPercentage as string)
-      : null;
+    const salaryNumber =
+      salary !== undefined ? parseFloat(salary as string) : null;
+    const childrenNumber =
+      childrenQuantity !== undefined
+        ? parseInt(childrenQuantity as string, 10)
+        : null;
+    const contributionNumber =
+      contributionPercentage !== undefined
+        ? parseFloat(contributionPercentage as string)
+        : null;
 
     if (!cardIDNumber) {
       res.status(400).json({ message: "La cédula del empleado es requerida" });
@@ -218,7 +224,7 @@ export const setEmployeeSalary = async (req: Request, res: Response) => {
       res.status(400).json({ message: "El salario debe ser mayor a 0" });
     } else if (
       contributionNumber !== null &&
-      (contributionNumber <= 0 || contributionNumber > 5)
+      (contributionNumber < 0 || contributionNumber > 5)
     ) {
       res.status(400).json({
         message: "La contribución debe ser mayor a 0 y menor o igual a 5",
