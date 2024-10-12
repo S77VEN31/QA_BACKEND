@@ -53,5 +53,22 @@ const insertNFortnights = async (req: Request, res: Response) => {
     }
   }
 };
-export { insertFortnight, insertNFortnights };
 
+const calculateTax = async (req: Request, res: Response) => {
+  try {
+    const { salary } = req.query;
+    const salaryNumber = salary ? parseInt(salary as string) : null;
+
+    const result = await pool.query(
+      "SELECT * FROM calculate_tax($1::NUMERIC)",
+      [salaryNumber]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error getting report detail");
+  }
+};
+
+export { insertFortnight, insertNFortnights, calculateTax };
