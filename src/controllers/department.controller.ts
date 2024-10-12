@@ -326,6 +326,29 @@ export const getDepartmentTotals = async (req: Request, res: Response) => {
     res.status(200).json(result.rows);
   } catch (err) {
     console.error(err);
-    res.status(500).send("Error getting report detail");
+    res.status(500).send("Error getting department totals");
+  }
+};
+
+export const getDepartmentEmployees = async (req: Request, res: Response) => {
+  try {
+    let { IDCard, departmentID, startRange, limitRange } = req.query;
+
+    const idCardNumber = IDCard ? parseInt(IDCard as string, 10) : null;
+    const departmentIdNumber = departmentID
+      ? parseInt(departmentID as string, 10)
+      : null;
+    const start = startRange ? parseInt(startRange as string, 10) : 0;
+    const limit = limitRange ? parseInt(limitRange as string, 10) : 100;
+
+    const result = await pool.query(
+      "SELECT * FROM getDepartamentosEmpleados($1::SMALLINT, $2::INT, $3::INT, $4::INT)",
+      [departmentIdNumber, idCardNumber, start, limit]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error getting the department's employees");
   }
 };
