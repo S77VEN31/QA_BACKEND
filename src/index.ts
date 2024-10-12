@@ -38,7 +38,7 @@ app.get("/", async (req: Request, res: Response) => {
 
 app.use("/department", authenticateToken, departmentRoutes);
 app.use("/report", authenticateToken, reportRoutes);
-app.use("/fortnight", authenticateToken, fortnightRoutes);
+app.use("/fortnight", fortnightRoutes);
 app.use("/auth", authRoutes);
 
 app.listen(port, () => {
