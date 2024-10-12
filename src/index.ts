@@ -10,6 +10,7 @@ import {
   departmentRoutes,
   fortnightRoutes,
   reportRoutes,
+  collaboratorRoutes,
 } from "./routes";
 // CORS
 import cors from "cors";
@@ -39,6 +40,7 @@ app.get("/", async (req: Request, res: Response) => {
 app.use("/department", departmentRoutes);
 app.use("/report", authenticateToken, reportRoutes);
 app.use("/fortnight", authenticateToken, fortnightRoutes);
+app.use("/collaborator", collaboratorRoutes); 
 app.use("/auth", authRoutes);
 
 app.listen(port, () => {

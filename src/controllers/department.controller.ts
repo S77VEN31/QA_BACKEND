@@ -5,6 +5,23 @@ import { pool } from "../database";
 // Utils
 import { formatDate } from "../utils";
 
+/**
+ * Controller to retrieve departments, optionally filtered by a collaborator's card ID (cédula).
+ *
+ * This method checks if a card ID is provided in the query parameters. If a card ID is present, it queries the database 
+ * using a stored procedure (`getdepartamentos`) to retrieve departments associated with that collaborator. If no card ID is provided,
+ * it retrieves all departments using the same stored procedure without parameters.
+ *
+ * @async
+ * @function getDepartments
+ * @param {Request} req - Express request object, containing an optional card ID in req.query.cardID.
+ * @param {Response} res - Express response object, used to send responses to the client.
+ *
+ * @throws {Error} 400 - If the card ID is missing or invalid (if required).
+ * @throws {Error} 500 - If an unexpected error occurs while fetching the departments.
+ *
+ * @returns {void} Does not return a value, sends a JSON response with the departments' information or an error message.
+ */
 export const getDepartments = async (req: Request, res: Response) => {
   try {
     const cardID = req.query.cardID
@@ -26,6 +43,25 @@ export const getDepartments = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Controller to retrieve salary data for an employee in a specific department.
+ *
+ * This method receives a card ID (employee cédula) and a department ID from the query parameters. It checks that both 
+ * the card ID and department ID are provided, and then queries the database using the stored procedure 
+ * `obtenerdatosalarialcolaborador` to retrieve salary information for the specified employee and department.
+ * If either the card ID or department ID is missing, or if no salary data is found, an appropriate error response is sent.
+ *
+ * @async
+ * @function getEmployeeSalary
+ * @param {Request} req - Express request object, containing card ID in req.query.cardID and department ID in req.query.departmentID.
+ * @param {Response} res - Express response object, used to send responses to the client.
+ *
+ * @throws {Error} 400 - If the card ID or department ID is missing in the request.
+ * @throws {Error} 404 - If no salary data is found for the employee in the specified department.
+ * @throws {Error} 500 - If an unexpected error occurs while fetching the salary data.
+ *
+ * @returns {void} Does not return a value, sends a JSON response with the salary data or an error message.
+ */
 export const getEmployeeSalary = async (req: Request, res: Response) => {
   try {
     const cardID = req.query.cardID
@@ -262,25 +298,33 @@ export const setEmployeeSalary = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Insert employees into a specified department by calling a stored procedure.
- * This function extracts the department ID and a list of employee IDs from the request body
- * and inserts them into the department using a stored procedure. It ensures that the
- * department ID and a non-empty array of employee IDs are provided before proceeding.
- * A success or error message is sent as a response.
+/*
+ * Inserts employees into a specified department by calling a stored procedure.
+ * This function extracts the department ID and an array of employee IDs (cardIDs) from the request body.
+ * It validates that both the department ID and a non-empty array of employee IDs are provided before
+ * proceeding with the database operation.
+ * If the validation is successful, the function calls a stored procedure (`insertEmpleadosDepartamentos`)
+ * to insert the employees into the specified department. The function handles various error cases,
+ * including missing or invalid input and specific SQL errors, and returns an appropriate response.
  *
  * @param {Request} req - The request object, containing the following properties in the body:
- *    @param {number} [departamentoId] - The ID of the department into which the employees will be inserted. This field is required.
- *    @param {Array<number>} [empleados] - An array of employee IDs to be inserted into the department. This array must be non-empty.
+ *    @param {number} departmentID - The ID of the department where employees will be inserted. This field is required.
+ *    @param {Array<number>} cardIDs - An array of employee IDs (cédulas) to be inserted into the department. The array must contain at least one element.
  *
  * @param {Response} res - The response object used to send the result back to the client.
- *    Sends a success message if the employees are inserted successfully, or an error message if the
- *    department ID or employee list is missing, invalid, or empty. If an error occurs during
- *    the process, a server error response is sent.
+ *    Sends a success message if the employees are inserted successfully. Sends a `400 Bad Request` status if:
+ *      - The department ID is missing or invalid
+ *      - The employee list (cardIDs) is missing or empty
+ *    In the event of a database error, the function handles specific error codes:
+ *      - `P0001`: Department does not exist.
+ *      - `P0002`: One or more employee IDs (cédulas) do not exist.
+ *      - `P0003`: One or more employees already belong to the department.
+ *    For other errors, a `500 Internal Server Error` status is returned with a generic error message.
  *
- * @returns {void} - Sends a `200 OK` status with a success message, or a `400 Bad Request` status
- *    if `departamentoId` or `empleados` array is missing or invalid. If there is a server error,
- *    sends a `500 Internal Server Error`.
+ * @returns {void} - The function sends one of the following HTTP responses:
+ *    - `200 OK` with a success message if the employees are inserted successfully.
+ *    - `400 Bad Request` with a specific error message if input validation fails or the stored procedure returns an error.
+ *    - `500 Internal Server Error` if an unexpected error occurs during the process.
  */
 export const insertEmployeesIntoDepartment = async (
   req: Request,
@@ -288,24 +332,61 @@ export const insertEmployeesIntoDepartment = async (
 ) => {
   try {
     // Extract depNombre from query parameters
-    const { departamentoId, empleados } = req.body;
-
+    const { departmentID, cardIDs } = req.body;
     // Check if departamentoId is provided and empleados is a valid array with at least one element
-    if (departamentoId && Array.isArray(empleados) && empleados.length > 0) {
+    if (departmentID && Array.isArray(cardIDs) && cardIDs.length > 0) {
       // Call the stored procedure to assign salaries to employees in the department
       await pool.query("CALL insertEmpleadosDepartamentos($1, $2)", [
-        departamentoId,
-        empleados,
+        departmentID,
+        cardIDs,
       ]);
       // Send a success response
       res.status(200).send("Employees inserted successfully");
     } else {
       res.status(400).send("Department id or employee list is required");
     }
-  } catch (err) {
+  } catch (err: any) {
     // Log the error and send an error response
+    if (err.code === "P0001") {
+      res.status(400).json({
+        message: `El departamento no existe`,
+      });
+    } else if (err.code === "P0002") {
+      res.status(400).json({
+        message: `Hay una cédula que no existe.`,
+      });
+    } else if (err.code === "P0003") {
+      res.status(400).json({
+        message: `Uno de los empleados ya pertenece a ese departamento.`,
+      });
+    } else {
+      console.error(err);
+      res.status(500).send("Error assigning inserting employees to department");
+    }
+  }
+};
+
+export const getEmployeeName = async (req: Request, res: Response) => {
+  try {
+    const IDCard = req.query.IDCard
+      ? parseInt(req.query.cardID as string)
+      : null;
+
+    if (!IDCard) {
+      res.status(400).json({ message: "IDCard is required" });
+    } else {
+      const result = await pool.query(`SELECT * FROM getempleadonombre($1)`, [
+        IDCard,
+      ]);
+      if (!result || result.rowCount === 0) {
+        res.status(404).json({ message: "Employee not found" });
+      } else {
+        res.status(200).json(result.rows[0]);
+      }
+    }
+  } catch (err) {
     console.error(err);
-    res.status(500).send("Error assigning inserting employees to department");
+    res.status(500).send("Error getting employee name");
   }
 };
 
