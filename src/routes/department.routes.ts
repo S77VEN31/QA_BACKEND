@@ -8,6 +8,7 @@ import {
   insertEmployeesIntoDepartment,
   setEmployeeSalary,
   setSalary,
+  getDepartmentTotals,
 } from "../controllers";
 
 // Router
@@ -20,5 +21,6 @@ router.patch("/", setSalary);
 router.put("/", insertEmployeesIntoDepartment);
 router.patch("/employee", setEmployeeSalary);
 router.get("/employee", getEmployeeSalary);
+router.get("/totals", getDepartmentTotals);
 
 export default router;

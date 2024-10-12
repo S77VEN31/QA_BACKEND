@@ -2,6 +2,8 @@
 import { Request, Response } from "express";
 // Database
 import { pool } from "../database";
+// Utils
+import { formatDate } from "../utils";
 
 export const getDepartments = async (req: Request, res: Response) => {
   try {
@@ -304,5 +306,26 @@ export const insertEmployeesIntoDepartment = async (
     // Log the error and send an error response
     console.error(err);
     res.status(500).send("Error assigning inserting employees to department");
+  }
+};
+
+export const getDepartmentTotals = async (req: Request, res: Response) => {
+  try {
+    let { startDate, endDate, startRange, limitRange } = req.query;
+
+    const formattedStartDate = formatDate(startDate as string);
+    const formattedEndDate = formatDate(endDate as string);
+    const start = startRange ? parseInt(startRange as string, 10) : 0;
+    const limit = limitRange ? parseInt(limitRange as string, 10) : 100;
+
+    const result = await pool.query(
+      "SELECT * FROM getdepartamentostotal($1::DATE, $2::DATE, $3::INT, $4::INT)",
+      [formattedStartDate, formattedEndDate, start, limit]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error getting report detail");
   }
 };
