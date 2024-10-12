@@ -295,7 +295,6 @@ export const insertEmployeesIntoDepartment = async (
   try {
     // Extract depNombre from query parameters
     const { departmentID, cardIDs } = req.body;
-    console.log(departmentID, cardIDs);
     // Check if departamentoId is provided and empleados is a valid array with at least one element
     if (departmentID && Array.isArray(cardIDs) && cardIDs.length > 0) {
       // Call the stored procedure to assign salaries to employees in the department
