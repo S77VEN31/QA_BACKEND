@@ -8,7 +8,7 @@ import { formatDate } from "../utils";
 /**
  * Controller to retrieve departments, optionally filtered by a collaborator's card ID (cédula).
  *
- * This method checks if a card ID is provided in the query parameters. If a card ID is present, it queries the database 
+ * This method checks if a card ID is provided in the query parameters. If a card ID is present, it queries the database
  * using a stored procedure (`getdepartamentos`) to retrieve departments associated with that collaborator. If no card ID is provided,
  * it retrieves all departments using the same stored procedure without parameters.
  *
@@ -46,8 +46,8 @@ export const getDepartments = async (req: Request, res: Response) => {
 /**
  * Controller to retrieve salary data for an employee in a specific department.
  *
- * This method receives a card ID (employee cédula) and a department ID from the query parameters. It checks that both 
- * the card ID and department ID are provided, and then queries the database using the stored procedure 
+ * This method receives a card ID (employee cédula) and a department ID from the query parameters. It checks that both
+ * the card ID and department ID are provided, and then queries the database using the stored procedure
  * `obtenerdatosalarialcolaborador` to retrieve salary information for the specified employee and department.
  * If either the card ID or department ID is missing, or if no salary data is found, an appropriate error response is sent.
  *
@@ -369,7 +369,7 @@ export const insertEmployeesIntoDepartment = async (
 export const getEmployeeName = async (req: Request, res: Response) => {
   try {
     const IDCard = req.query.IDCard
-      ? parseInt(req.query.cardID as string)
+      ? parseInt(req.query.IDCard as string)
       : null;
 
     if (!IDCard) {
